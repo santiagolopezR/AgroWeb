@@ -1,1 +1,1 @@
-web: python manage.py migrate && waitress-serve --port=$PORT cultivos.wsgi:application
+web: gunicorn cultivos.wsgi
