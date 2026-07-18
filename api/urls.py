@@ -16,13 +16,3 @@ router.register('actividad-productos', ActividadProductoViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 ]
-
-from django.contrib import admin
-from django.urls import path, include
-from api.views import prueba
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    path('prueba/', prueba),
-]
