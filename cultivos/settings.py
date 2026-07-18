@@ -25,9 +25,13 @@ SECRET_KEY = 'django-insecure-kurpds*8st*9gfu@=_9y=vq1tt+-m_zmxhn6^ew844cg*v+cyi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    'agroweb-vv4b.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
 
-ALLOWED_HOSTS = ["*"]
+
 
 # Application definition
 
