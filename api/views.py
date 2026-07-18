@@ -47,3 +47,9 @@ class ActividadProductoViewSet(ModelViewSet):
     queryset = ActividadProducto.objects.all()
     serializer_class = ActividadProductoSerializer
     permission_classes = [AllowAny]
+
+
+from django.http import JsonResponse
+
+def prueba(request):
+    return JsonResponse({"mensaje": "Django funciona en Railway"})
