@@ -2,7 +2,16 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from .models import Cliente, Finca, Lote, CultivoCatalogo, CultivoEnLote, Producto, TipoActividad, Actividad, ActividadProducto
 from .serializers import ClienteSerializer, FincaSerializer, LoteSerializer, CultivoCatalogoSerializer, CultivoEnLoteSerializer, ProductoSerializer, TipoActividadSerializer, ActividadSerializer, ActividadProductoSerializer
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 
+from .models import Cliente, Finca, Lote, CultivoCatalogo, CultivoEnLote, Producto, TipoActividad, Actividad, ActividadProducto, ActividadLote, PrecioProducto
+from .serializers import ClienteSerializer, FincaSerializer, LoteSerializer, CultivoCatalogoSerializer, CultivoEnLoteSerializer, ProductoSerializer, TipoActividadSerializer, ActividadSerializer, ActividadProductoSerializer, ActividadLoteSerializer, PrecioProductoSerializer
 class ClienteViewSet(ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
@@ -73,3 +82,13 @@ def login_view(request):
         return Response({'token': token.key, 'user': user.username})
     else:
         return Response({'error': 'Credenciales inválidas'}, status=400)
+
+class ActividadLoteViewSet(ModelViewSet):
+    queryset = ActividadLote.objects.all()
+    serializer_class = ActividadLoteSerializer
+    permission_classes = [IsAuthenticated]
+
+class PrecioProductoViewSet(ModelViewSet):
+    queryset = PrecioProducto.objects.all()
+    serializer_class = PrecioProductoSerializer
+    permission_classes = [IsAuthenticated]
