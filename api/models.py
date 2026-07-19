@@ -46,6 +46,17 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+class PrecioProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='precios')
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_vigencia = models.DateField()
+    
+    class Meta:
+        ordering = ['-fecha_vigencia']
+    
+    def __str__(self):
+        return f"{self.producto.nombre} - ${self.precio} ({self.fecha_vigencia})"
+    
 class TipoActividad(models.Model):
     nombre = models.CharField(max_length=50)
     requiere_productos = models.BooleanField(default=True)
@@ -54,15 +65,25 @@ class TipoActividad(models.Model):
         return self.nombre
 
 class Actividad(models.Model):
-    cultivo_en_lote = models.ForeignKey(CultivoEnLote, on_delete=models.CASCADE, null=True, blank=True)
-    lote = models.ForeignKey(Lote, on_delete=models.CASCADE)
+    lotes = models.ManyToManyField(Lote, through='ActividadLote')
     tipo = models.ForeignKey(TipoActividad, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField()
     responsable = models.CharField(max_length=100)
     observaciones = models.TextField(blank=True)
     
     def __str__(self):
-        return f"{self.tipo.nombre} en {self.lote.nombre} ({self.fecha})"
+        return f"{self.tipo.nombre} ({self.fecha})"
+
+class ActividadLote(models.Model):
+    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
+    lote = models.ForeignKey(Lote, on_delete=models.CASCADE)
+    hectareas = models.FloatField(default=0)
+    
+    class Meta:
+        unique_together = ('actividad', 'lote')
+    
+    def __str__(self):
+        return f"{self.actividad} - {self.lote}"
 
 class ActividadProducto(models.Model):
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
