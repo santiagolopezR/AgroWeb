@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
@@ -17,12 +18,13 @@ class Finca(models.Model):
 
 class Lote(models.Model):
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # ← AGREGAR
     nombre = models.CharField(max_length=100)
     superficie = models.FloatField()
     
     def __str__(self):
-        return self.nombre
-
+        return f"{self.nombre} ({self.finca})"
+    
 class CultivoCatalogo(models.Model):
     nombre = models.CharField(max_length=100)
     
@@ -38,6 +40,7 @@ class CultivoEnLote(models.Model):
         return f"{self.cultivo.nombre} en {self.lote.nombre}"
 
 class Producto(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # ← AGREGAR
     nombre = models.CharField(max_length=100)
     categoria = models.CharField(max_length=50)
     unidad = models.CharField(max_length=20)
@@ -45,7 +48,7 @@ class Producto(models.Model):
     
     def __str__(self):
         return self.nombre
-
+    
 class PrecioProducto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='precios')
     precio = models.DecimalField(max_digits=10, decimal_places=2)
