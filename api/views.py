@@ -34,9 +34,14 @@ class FincaViewSet(ModelViewSet):
     permission_classes = [AllowAny]
 
 class LoteViewSet(ModelViewSet):
-    queryset = Lote.objects.all()
     serializer_class = LoteSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Lote.objects.filter(usuario=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
 class CultivoCatalogoViewSet(ModelViewSet):
     queryset = CultivoCatalogo.objects.all()
@@ -49,10 +54,15 @@ class CultivoEnLoteViewSet(ModelViewSet):
     permission_classes = [AllowAny]
 
 class ProductoViewSet(ModelViewSet):
-    queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
-    permission_classes = [AllowAny]
-
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Producto.objects.filter(usuario=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+        
 class TipoActividadViewSet(ModelViewSet):
     queryset = TipoActividad.objects.all()
     serializer_class = TipoActividadSerializer
