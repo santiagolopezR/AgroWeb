@@ -5,15 +5,15 @@ from .views import ClienteViewSet, FincaViewSet, LoteViewSet, CultivoCatalogoVie
 router = DefaultRouter()
 router.register('clientes', ClienteViewSet)
 router.register('fincas', FincaViewSet)
-router.register('lotes', LoteViewSet)
+router.register('lotes', LoteViewSet, basename='lote')
 router.register('cultivos', CultivoCatalogoViewSet)
 router.register('cultivos-en-lotes', CultivoEnLoteViewSet)
-router.register('productos', ProductoViewSet)
+router.register('productos', ProductoViewSet, basename='producto')
 router.register('tipos-actividad', TipoActividadViewSet)
 router.register('actividades', ActividadViewSet)
 router.register('actividad-productos', ActividadProductoViewSet)
-router.register('actividad-lotes', ActividadLoteViewSet)
-router.register('precio-productos', PrecioProductoViewSet)
+router.register('actividad-lotes', ActividadLoteViewSet, basename='actividad-lote')
+router.register('precio-productos', PrecioProductoViewSet, basename='precio-producto')
 
 urlpatterns = [
     path('', include(router.urls)),

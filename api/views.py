@@ -34,6 +34,7 @@ class FincaViewSet(ModelViewSet):
     permission_classes = [AllowAny]
 
 class LoteViewSet(ModelViewSet):
+    queryset = Lote.objects.all()  # ← AGREGAR
     serializer_class = LoteSerializer
     permission_classes = [IsAuthenticated]
     
@@ -42,7 +43,7 @@ class LoteViewSet(ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
-
+        
 class CultivoCatalogoViewSet(ModelViewSet):
     queryset = CultivoCatalogo.objects.all()
     serializer_class = CultivoCatalogoSerializer
@@ -54,6 +55,7 @@ class CultivoEnLoteViewSet(ModelViewSet):
     permission_classes = [AllowAny]
 
 class ProductoViewSet(ModelViewSet):
+    queryset = Producto.objects.all()  # ← AGREGAR
     serializer_class = ProductoSerializer
     permission_classes = [IsAuthenticated]
     
@@ -62,7 +64,7 @@ class ProductoViewSet(ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
-        
+
 class TipoActividadViewSet(ModelViewSet):
     queryset = TipoActividad.objects.all()
     serializer_class = TipoActividadSerializer
