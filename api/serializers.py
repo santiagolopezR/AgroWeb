@@ -62,3 +62,47 @@ class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actividad
         fields = ['id', 'lotes_detalle', 'tipo', 'fecha', 'responsable', 'observaciones', 'productos']
+from rest_framework import serializers
+from .models import Zafra, ActividadSiembra, ActividadCosecha, Proveedor, TipoCosto, FincaGasto, FincaGastoItem, Categoria
+
+class ZafraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zafra
+        fields = '__all__'
+
+class ActividadSiembraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActividadSiembra
+        fields = '__all__'
+
+class ActividadCosechaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActividadCosecha
+        fields = '__all__'
+
+class ProveedorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proveedor
+        fields = '__all__'
+
+class TipoCostoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoCosto
+        fields = '__all__'
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+
+class FincaGastoItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FincaGastoItem
+        fields = '__all__'
+
+class FincaGastoSerializer(serializers.ModelSerializer):
+    items = FincaGastoItemSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = FincaGasto
+        fields = '__all__'
