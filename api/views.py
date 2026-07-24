@@ -89,3 +89,55 @@ class PrecioProductoViewSet(ModelViewSet):
     queryset = PrecioProducto.objects.all()
     serializer_class = PrecioProductoSerializer
     permission_classes = [IsAuthenticated]
+from rest_framework import viewsets
+from .models import Zafra, ActividadSiembra, ActividadCosecha, Proveedor, TipoCosto, FincaGasto, FincaGastoItem, Categoria
+from .serializers import ZafraSerializer, ActividadSiembraSerializer, ActividadCosechaSerializer, ProveedorSerializer, TipoCostoSerializer, FincaGastoSerializer, FincaGastoItemSerializer, CategoriaSerializer
+
+class ZafraViewSet(viewsets.ModelViewSet):
+    queryset = Zafra.objects.all()
+    serializer_class = ZafraSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Zafra.objects.filter(user=self.request.user)
+
+class ActividadSiembraViewSet(viewsets.ModelViewSet):
+    queryset = ActividadSiembra.objects.all()
+    serializer_class = ActividadSiembraSerializer
+    permission_classes = [IsAuthenticated]
+
+class ActividadCosechaViewSet(viewsets.ModelViewSet):
+    queryset = ActividadCosecha.objects.all()
+    serializer_class = ActividadCosechaSerializer
+    permission_classes = [IsAuthenticated]
+
+class ProveedorViewSet(viewsets.ModelViewSet):
+    queryset = Proveedor.objects.all()
+    serializer_class = ProveedorSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Proveedor.objects.filter(user=self.request.user)
+
+class TipoCostoViewSet(viewsets.ModelViewSet):
+    queryset = TipoCosto.objects.all()
+    serializer_class = TipoCostoSerializer
+    permission_classes = [IsAuthenticated]
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+    permission_classes = [IsAuthenticated]
+
+class FincaGastoViewSet(viewsets.ModelViewSet):
+    queryset = FincaGasto.objects.all()
+    serializer_class = FincaGastoSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return FincaGasto.objects.filter(user=self.request.user)
+
+class FincaGastoItemViewSet(viewsets.ModelViewSet):
+    queryset = FincaGastoItem.objects.all()
+    serializer_class = FincaGastoItemSerializer
+    permission_classes = [IsAuthenticated]
