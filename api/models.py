@@ -217,6 +217,7 @@ class TipoCosto(models.Model):
 
 class FincaGasto(models.Model):
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE)
+    zafra = models.ForeignKey(Zafra, on_delete=models.CASCADE, null=True, blank=True)
     factura_numero = models.CharField(max_length=100)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateField()
@@ -244,4 +245,3 @@ class FincaGastoItem(models.Model):
     
     def __str__(self):
         return f"Item - {self.descripcion}"
-    
