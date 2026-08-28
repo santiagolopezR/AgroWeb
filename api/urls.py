@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import ClienteViewSet, FincaViewSet, LoteViewSet, CultivoCatalogoViewSet, CultivoEnLoteViewSet, ProductoViewSet, TipoActividadViewSet, ActividadViewSet, ActividadProductoViewSet, ActividadLoteViewSet, PrecioProductoViewSet, login_view
-from .views import ZafraViewSet, ActividadSiembraViewSet, ActividadCosechaViewSet, ProveedorViewSet, TipoCostoViewSet, CategoriaViewSet, FincaGastoViewSet, FincaGastoItemViewSet
+from .views import ZafraViewSet, ActividadSiembraViewSet, ActividadCosechaViewSet, ProveedorViewSet, TipoCostoViewSet, CategoriaViewSet, FincaGastoViewSet, FincaGastoItemViewSet,CostoFijoViewSet,CostoAdicionalViewSet,PrestamoTrabajadorViewSet,AbonoPrestamo ViewSet,
 
 router = DefaultRouter()
 router.register('clientes', ClienteViewSet, basename='cliente')
@@ -24,6 +24,10 @@ router.register(r'tipos-costo', TipoCostoViewSet)
 router.register(r'categorias', CategoriaViewSet)
 router.register(r'finca-gastos', FincaGastoViewSet)
 router.register(r'finca-gasto-items', FincaGastoItemViewSet)
+router.register(r'prestamos', PrestamoTrabajadorViewSet, basename='prestamo')
+router.register(r'abonos', AbonoPrestamo ViewSet, basename='abono')
+router.register(r'costos-fijos', CostoFijoViewSet, basename='costo-fijo')
+router.register(r'costos-adicionales', CostoAdicionalViewSet, basename='costo-adicional')
 
 urlpatterns = [
     path('', include(router.urls)),
