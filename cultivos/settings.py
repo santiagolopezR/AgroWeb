@@ -113,5 +113,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
-    "https://agroweb-frontend.vercel.app",
+    "https://agro-web-frontend-three.vercel.app",  # ← CORRECCIÓN
 ]
+
+# ==========================================
+# SEGURIDAD SSL/HTTPS
+# ==========================================
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000  # 1 año
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# ==========================================
+# SECURITY HEADERS
+# ==========================================
+
+SECURE_CONTENT_SECURITY_POLICY = {
+    'default-src': ("'self'",),
+    'script-src': ("'self'", "'unsafe-inline'"),
+    'style-src': ("'self'", "'unsafe-inline'"),
+}
