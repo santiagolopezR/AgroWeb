@@ -116,29 +116,16 @@ class Actividad(models.Model):
     lotes = models.ManyToManyField(Lote, through='ActividadLote')
     tipo = models.ForeignKey(TipoActividad, on_delete=models.SET_NULL, null=True)
     zafra = models.ForeignKey(Zafra, on_delete=models.CASCADE, null=True, blank=True)
+    finca = models.ForeignKey(Finca, on_delete=models.CASCADE, null=True, blank=True)
     fecha = models.DateField()
     responsable = models.CharField(max_length=100)
     observaciones = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     
     # Costos adicionales
-    cantidad_personas = models.IntegerField(null=True, blank=True)
-    horas_trabajo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    valor_jornal = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    total_mano_obra = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    
-    tipo_maquina = models.CharField(max_length=255, null=True, blank=True)
-    horas_maquina = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    valor_hora_maquina = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    total_maquina = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    
-    tipo_combustible = models.CharField(max_length=100, null=True, blank=True)
-    cantidad_combustible = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    precio_combustible = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    total_combustible = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    
-    costos_adicionales = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    jornales_cantidad = models.IntegerField(null=True, blank=True)
     costo_total = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    detalle_costos = JSONField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -149,6 +136,7 @@ class ActividadLote(models.Model):
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
     lote = models.ForeignKey(Lote, on_delete=models.CASCADE)
     hectareas = models.FloatField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     
     class Meta:
         unique_together = ('actividad', 'lote')
@@ -162,6 +150,7 @@ class ActividadProducto(models.Model):
     cantidad = models.DecimalField(max_digits=18, decimal_places=2)
     costo_unitario = models.DecimalField(max_digits=18, decimal_places=2)
     total = models.DecimalField(max_digits=18, decimal_places=2)
+    dosis_por_hectarea = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
     
     def __str__(self):
         return f"{self.producto.nombre} en {self.actividad}"
@@ -218,24 +207,23 @@ class TipoCosto(models.Model):
 class FincaGasto(models.Model):
     finca = models.ForeignKey(Finca, on_delete=models.CASCADE)
     zafra = models.ForeignKey(Zafra, on_delete=models.CASCADE, null=True, blank=True)
-    factura_numero = models.CharField(max_length=100)
+    factura = models.CharField(max_length=100, null=True, blank=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateField()
     iva_porcentaje = models.DecimalField(max_digits=5, decimal_places=2, default=19)
     observaciones = models.TextField(null=True, blank=True)
-    total_bruto = models.DecimalField(max_digits=18, decimal_places=2, default=0)
-    total_iva = models.DecimalField(max_digits=18, decimal_places=2, default=0)
     total_neto = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    total_iva = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    total_general = models.DecimalField(max_digits=18, decimal_places=2, default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Gasto {self.factura_numero}"
+        return f"Gasto {self.factura}"
 
 class FincaGastoItem(models.Model):
     gasto = models.ForeignKey(FincaGasto, on_delete=models.CASCADE, related_name='items')
     tipo_costo = models.ForeignKey(TipoCosto, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True)
     descripcion = models.CharField(max_length=500)
     cantidad = models.DecimalField(max_digits=18, decimal_places=2)
     unidad = models.CharField(max_length=50, null=True, blank=True)
@@ -245,3 +233,58 @@ class FincaGastoItem(models.Model):
     
     def __str__(self):
         return f"Item - {self.descripcion}"
+
+
+# ==========================================
+# FASE 5: PRÉSTAMOS
+# ==========================================
+
+class PrestamoTrabajador(models.Model):
+    nombre_trabajador = models.CharField(max_length=255)
+    quien_otorga = models.CharField(max_length=100)
+    monto_inicial = models.DecimalField(max_digits=18, decimal_places=2)
+    fecha_otorgamiento = models.DateField()
+    activo = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Préstamo {self.nombre_trabajador} - ${self.monto_inicial}"
+
+
+class AbonoPrestamo(models.Model):
+    prestamo = models.ForeignKey(PrestamoTrabajador, on_delete=models.CASCADE, related_name='abonos')
+    monto = models.DecimalField(max_digits=18, decimal_places=2)
+    fecha_abono = models.DateField()
+    quien_descuenta = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-fecha_abono']
+    
+    def __str__(self):
+        return f"Abono ${self.monto} - {self.prestamo.nombre_trabajador}"
+
+
+class CostoFijo(models.Model):
+    nombre = models.CharField(max_length=255)
+    valor_unitario = models.DecimalField(max_digits=18, decimal_places=2)
+    unidad = models.CharField(max_length=50)
+    activo = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.nombre} - ${self.valor_unitario} {self.unidad}"
+
+
+class CostoAdicional(models.Model):
+    actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE, related_name='costos_adicionales')
+    costo_fijo = models.ForeignKey(CostoFijo, on_delete=models.CASCADE)
+    cantidad = models.DecimalField(max_digits=18, decimal_places=2)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.costo_fijo.nombre} en {self.actividad}"
