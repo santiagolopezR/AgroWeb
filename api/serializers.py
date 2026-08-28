@@ -1,3 +1,62 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator, MinValueValidator, MaxValueValidator
+import re
+ 
+# ==========================================
+# CUSTOM VALIDATORS
+# ==========================================
+ 
+def validate_nombre(value):
+    """Valida que el nombre no sea vacío y tenga caracteres válidos"""
+    if not value or len(value.strip()) == 0:
+        raise ValidationError("El nombre no puede estar vacío")
+    if len(value) > 255:
+        raise ValidationError("El nombre no puede exceder 255 caracteres")
+    # Permitir letras, números, espacios y caracteres comunes
+    if not re.match(r'^[a-zA-Z0-9\s\-áéíóúñÁÉÍÓÚÑ\.]+$', value):
+        raise ValidationError("El nombre contiene caracteres inválidos")
+ 
+ 
+def validate_email_format(value):
+    """Valida que el email sea válido"""
+    if not value:
+        return
+    validator = EmailValidator()
+    try:
+        validator(value)
+    except ValidationError:
+        raise ValidationError("Email inválido")
+ 
+ 
+def validate_positive_number(value):
+    """Valida que sea un número positivo"""
+    if value < 0:
+        raise ValidationError("El valor no puede ser negativo")
+ 
+ 
+def validate_fecha(value):
+    """Valida que la fecha sea válida"""
+    from datetime import datetime, date
+    if isinstance(value, str):
+        try:
+            datetime.fromisoformat(value)
+        except:
+            raise ValidationError("Formato de fecha inválido (use YYYY-MM-DD)")
+    elif not isinstance(value, date):
+        raise ValidationError("Debe ser una fecha válida")
+ 
+ 
+def validate_nit(value):
+    """Valida formato de NIT (números y caracteres comunes)"""
+    if value and not re.match(r'^[0-9\-]+$', value):
+        raise ValidationError("NIT debe contener solo números y guiones")
+ 
+ 
+def validate_phone(value):
+    """Valida formato de teléfono"""
+    if value and not re.match(r'^[\d\s\-\+\(\)]+$', value):
+        raise ValidationError("Teléfono contiene caracteres inválidos")
+    
 from rest_framework import serializers
 from .models import (
     Cliente, Finca, Lote, CultivoCatalogo, CultivoEnLote, Producto, TipoActividad, 
