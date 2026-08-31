@@ -288,3 +288,29 @@ class CostoAdicional(models.Model):
     
     def __str__(self):
         return f"{self.costo_fijo.nombre} en {self.actividad}"
+
+# ==========================================
+# AUDIT LOG
+# ==========================================
+
+class AuditLog(models.Model):
+    ACTION_CHOICES = [
+        ('CREATE', 'Crear'),
+        ('UPDATE', 'Editar'),
+        ('DELETE', 'Eliminar'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    tabla = models.CharField(max_length=100)
+    accion = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    objeto_id = models.IntegerField()
+    valores_antes = models.JSONField(null=True, blank=True)
+    valores_despues = models.JSONField(null=True, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-fecha']
+    
+    def __str__(self):
+        return f"{self.user} - {self.accion} {self.tabla} ({self.fecha})"
